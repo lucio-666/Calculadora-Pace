@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora de Pace e Voltas</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#317EFB" />
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f0f0f0;
+      max-width: 500px;
+      margin: auto;
+    }
+    input, button {
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      width: 100%;
+      font-size: 1rem;
+    }
+    .result {
+      margin-top: 1rem;
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Calculadora de Pace e Voltas</h2>
+  <label>Distância total (km):</label>
+  <input type="number" id="distancia" step="any" placeholder="Ex: 2.4" />
+
+  <label>Tempo total (minutos):</label>
+  <input type="number" id="tempo" step="any" placeholder="Ex: 12" />
+
+  <label>Comprimento da pista (metros):</label>
+  <input type="number" id="pista" step="any" placeholder="Ex: 400" />
+
+  <button onclick="calcular()">Calcular</button>
+
+  <div class="result" id="resultado"></div>
+
+  <script>
+    function calcular() {
+      const distancia = parseFloat(document.getElementById("distancia").value);
+      const tempo = parseFloat(document.getElementById("tempo").value);
+      const pista = parseFloat(document.getElementById("pista").value);
+
+      if (isNaN(distancia) || isNaN(tempo) || isNaN(pista) || distancia <= 0 || tempo <= 0 || pista <= 0) {
+        document.getElementById("resultado").innerHTML = "Preencha todos os campos corretamente.";
+        return;
+      }
+
+      const pace = tempo / distancia; // min/km
+      const voltas = (distancia * 1000) / pista;
+      const tempoPorVolta = tempo / voltas;
+
+      function formatarTempo(minutos) {
+        const min = Math.floor(minutos);
+        const seg = Math.round((minutos - min) * 60);
+        return `${min}:${seg.toString().padStart(2, '0')} min`;
+      }
+
+      document.getElementById("resultado").innerHTML = `
+        <strong>Pace médio:</strong> ${formatarTempo(pace)} por km<br>
+        <strong>Voltas na pista:</strong> ${voltas.toFixed(2)}<br>
+        <strong>Tempo por volta:</strong> ${formatarTempo(tempoPorVolta)}
+      `;
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service Worker registrado:', reg.scope))
+        .catch(err => console.log('Erro ao registrar o Service Worker:', err));
+    }
+  </script>
+</body>
+</html>
